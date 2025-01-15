@@ -73,23 +73,16 @@ export const LemonTag: React.FunctionComponent<LemonTagProps & React.RefAttribut
                 {children}
                 {popover?.overlay && (
                     <LemonButtonWithDropdown
-                        dropdown={popover}
-                        size="small"
-                        className="LemonTag__right-button"
                         icon={<IconEllipsis />}
+                        dropdown={popover}
                         onClick={(e) => {
                             e.stopPropagation()
                         }}
-                    />
-                )}
-                {closable && (
-                    <LemonButton
-                        icon={<IconX className="h-3.5 w-3.5" />}
-                        onClick={onClose}
                         size="xsmall"
-                        className="LemonTag__right-button"
+                        noPadding
                     />
                 )}
+                {closable && <LemonButton icon={<IconX />} onClick={onClose} size="xsmall" noPadding />}
             </div>
         )
     }

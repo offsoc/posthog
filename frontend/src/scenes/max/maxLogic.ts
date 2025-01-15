@@ -4,7 +4,7 @@ import { createParser } from 'eventsource-parser'
 import { actions, afterMount, connect, kea, key, listeners, path, props, reducers, selectors } from 'kea'
 import { loaders } from 'kea-loaders'
 import api, { ApiError } from 'lib/api'
-import { uuid } from 'lib/utils'
+import { capitalizeFirstLetter, uuid } from 'lib/utils'
 import { isAssistantMessage, isHumanMessage, isReasoningMessage, isVisualizationMessage } from 'scenes/max/utils'
 import { projectLogic } from 'scenes/projectLogic'
 
@@ -60,6 +60,13 @@ export const maxLogic = kea<maxLogicType>([
         scrollThreadToBottom: true,
         setConversation: (conversation: Conversation) => ({ conversation }),
         setTraceId: (traceId: string) => ({ traceId }),
+        registerSceneContext: (id: number, kind: string, title: string, content: string) => ({
+            id,
+            kind,
+            title,
+            content,
+        }),
+        deregisterSceneContext: (id: number) => ({ id }),
     }),
     reducers({
         question: [
@@ -109,6 +116,19 @@ export const maxLogic = kea<maxLogicType>([
             },
         ],
         traceId: [null as string | null, { setTraceId: (_, { traceId }) => traceId }],
+        sceneContext: [
+            {} as Record<number, { kind: string; title: string; content: string }>,
+            {
+                registerSceneContext: (state, { id, kind, title, content }) => ({
+                    ...state,
+                    [id]: { kind, title, content },
+                }),
+                deregisterSceneContext: (state, { id }) => {
+                    const { [id]: _, ...rest } = state
+                    return rest
+                },
+            },
+        ],
     }),
     loaders({
         // TODO: Move question suggestions to `maxGlobalLogic`, which will make this logic `maxThreadLogic`
@@ -165,14 +185,24 @@ export const maxLogic = kea<maxLogicType>([
             )
         },
         askMax: async ({ prompt }) => {
-            actions.addMessage({ type: AssistantMessageType.Human, content: prompt, status: 'completed' })
+            const sceneContextFormatted = Object.values(values.sceneContext)
+                .map(({ kind, title, content }) => `${capitalizeFirstLetter(kind)} "${title}":\n${content}`)
+                .join('\n\n')
+
+            const promptWithContext = `${prompt}\n\nFor context, here's what I'm looking at:\n\n${sceneContextFormatted}`
+
+            actions.addMessage({
+                type: AssistantMessageType.Human,
+                content: promptWithContext,
+                status: 'completed',
+            })
             try {
                 // Generate a trace ID for the conversation run
                 const traceId = uuid()
                 actions.setTraceId(traceId)
 
                 const response = await api.conversations.create({
-                    content: prompt,
+                    content: promptWithContext,
                     conversation: values.conversation?.id,
                     trace_id: traceId,
                 })

@@ -43,7 +43,7 @@ export function Thread(): JSX.Element | null {
     const { threadGrouped } = useValues(maxLogic)
 
     return (
-        <div className="flex flex-col items-stretch w-full max-w-200 self-center gap-2 grow p-4">
+        <div className="@container/thread flex flex-col items-stretch w-full max-w-200 self-center gap-2 grow p-4">
             {threadGrouped.map((group, index) => (
                 <MessageGroup key={index} messages={group} index={index} isFinal={index === threadGrouped.length - 1} />
             ))}
@@ -63,7 +63,12 @@ function MessageGroup({ messages, isFinal: isFinalGroup }: MessageGroupProps): J
     const groupType = messages[0].type === 'human' ? 'human' : 'ai'
 
     return (
-        <div className={clsx('relative flex gap-2', groupType === 'human' ? 'flex-row-reverse ml-10' : 'mr-10')}>
+        <div
+            className={clsx(
+                'relative flex gap-2',
+                groupType === 'human' ? 'flex-row-reverse ml-4 @md/thread:ml-10 ' : 'mr-4 @md/thread:mr-10'
+            )}
+        >
             <Tooltip placement={groupType === 'human' ? 'right' : 'left'} title={groupType === 'human' ? 'You' : 'Max'}>
                 <ProfilePicture
                     user={
@@ -72,7 +77,7 @@ function MessageGroup({ messages, isFinal: isFinalGroup }: MessageGroupProps): J
                             : { hedgehog_config: { ...user?.hedgehog_config, use_as_profile: true } }
                     }
                     size="lg"
-                    className="mt-1 border"
+                    className="hidden @md/thread:block mt-1 border"
                 />
             </Tooltip>
             <div
@@ -152,7 +157,11 @@ const MessageTemplate = React.forwardRef<HTMLDivElement, MessageTemplateProps>(f
 ) {
     return (
         <div
-            className={twMerge('flex flex-col gap-1 w-full', type === 'human' ? 'items-end' : 'items-start', className)}
+            className={twMerge(
+                'flex flex-col gap-1 w-full break-words',
+                type === 'human' ? 'items-end' : 'items-start',
+                className
+            )}
             ref={ref}
         >
             <div
