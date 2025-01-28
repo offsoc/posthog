@@ -101,7 +101,6 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead},
 	}))
-	e.File("/", "./index.html")
 
 	// Routes
 	e.GET("/", index)
@@ -144,7 +143,7 @@ func main() {
 			}
 		}
 
-		eventTypes := []string{}
+		var eventTypes []string
 		if eventType != "" {
 			eventTypes = strings.Split(eventType, ",")
 		}
@@ -207,7 +206,8 @@ func main() {
 		return c.JSON(http.StatusOK, claims)
 	})
 
-	e.GET("/sse", func(c echo.Context) error {
+	e.File("/debug", "./index.html")
+	e.GET("/debug/sse", func(c echo.Context) error {
 		e.Logger.Printf("Map client connected, ip: %v", c.RealIP())
 
 		w := c.Response()
