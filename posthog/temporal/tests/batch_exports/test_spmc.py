@@ -7,9 +7,11 @@ import pyarrow as pa
 import pytest
 from django.test import override_settings
 
+from posthog.hogql import ast
 from posthog.temporal.batch_exports.spmc import (
     Producer,
     RecordBatchQueue,
+    SessionsRecordBatchModel,
     compose_filters_clause,
     slice_record_batch,
     use_distributed_events_recent_table,
@@ -253,3 +255,26 @@ def test_compose_filters_clause(
     result_clause, result_values = compose_filters_clause(filters, team_id=ateam.id)
     assert result_clause == expected_clause
     assert result_values == expected_values
+
+
+async def test_sessions_record_batch_model(ateam, data_interval_start, data_interval_end):
+    model = SessionsRecordBatchModel(
+        team_id=ateam.id, is_backfill=False, full_range=(data_interval_start, data_interval_end)
+    )
+    context = await model.get_hogql_context(ateam.id)
+    hogql_query = model.get_hogql_query()
+    team_id_filter = ast.CompareOperation(
+        op=ast.CompareOperationOp.Eq,
+        left=ast.Field(chain=["sessions", "team_id"]),
+        right=ast.Constant(value=ateam.id),
+    )
+    printed_query, values = await model.as_query_with_parameters()
+
+    assert context.output_format == "ArrowStream"
+
+    assert hogql_query.prewhere is not None
+    assert isinstance(hogql_query.prewhere, ast.And)
+    assert team_id_filter in hogql_query.prewhere.exprs
+
+    assert f"equals(raw_sessions.team_id, {ateam.id})" in printed_query
+    assert "FORMAT ArrowStream" in printed_query
