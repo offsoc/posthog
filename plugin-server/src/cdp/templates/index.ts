@@ -3,9 +3,9 @@ import { template as webhookTemplate } from './_destinations/webhook/webhook.tem
 import { template as defaultTransformationTemplate } from './_transformations/default/default.template'
 import { template as geoipTemplate } from './_transformations/geoip/geoip.template'
 import { template as ipAnonymizationTemplate } from './_transformations/ip-anonymization/ip-anonymization.template'
+import { template as piiHashingTemplate } from './_transformations/pii-hashing/pii-hashing.template'
 import { template as removeNullPropertiesTemplate } from './_transformations/remove-null-properties/remove-null-properties.template'
 import { HogFunctionTemplate } from './types'
-
 export const HOG_FUNCTION_TEMPLATES_DESTINATIONS: HogFunctionTemplate[] = [webhookTemplate]
 
 export const HOG_FUNCTION_TEMPLATES_TRANSFORMATIONS: HogFunctionTemplate[] = [
@@ -13,6 +13,7 @@ export const HOG_FUNCTION_TEMPLATES_TRANSFORMATIONS: HogFunctionTemplate[] = [
     geoipTemplate,
     ipAnonymizationTemplate,
     removeNullPropertiesTemplate,
+    piiHashingTemplate,
 ]
 
 export const HOG_FUNCTION_TEMPLATES_DESTINATIONS_DEPRECATED: HogFunctionTemplate[] = DESTINATION_PLUGINS.map(
