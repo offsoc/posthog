@@ -162,10 +162,9 @@ interface RenderColorConfig {
 }
 
 function RenderTable({ colors }: { colors: RenderColorConfig[] }): JSX.Element {
-    const gridClasses = 'grid grid-cols-[100px_1fr_1fr_1fr] gap-2 [&_p]:mb-0 [&_pre]:mb-0 items-center'
     return (
-        <div className="flex flex-col gap-2">
-            <div className={gridClasses}>
+        <div className="flex flex-col gap-8 md:gap-2">
+            <div className="hidden md:grid grid-cols-[100px_1fr_1fr_1fr] gap-2 [&_p]:mb-0 [&_pre]:mb-0 items-center">
                 <p>&nbsp;</p>
                 <p>Name</p>
                 <p>Tailwind class</p>
@@ -173,14 +172,34 @@ function RenderTable({ colors }: { colors: RenderColorConfig[] }): JSX.Element {
             </div>
             {colors.map(({ tailwindClass, description, name }) => {
                 return (
-                    <div key={name} className={gridClasses}>
-                        {/* eslint-disable-next-line react/forbid-dom-props */}
-                        <div className="rounded h-full w-full" style={{ backgroundColor: `var(${name})` }}>
-                            &nbsp;
+                    <div
+                        key={name}
+                        className="flex flex-col md:grid md:grid-cols-[100px_1fr_1fr_1fr] gap-2 [&_p]:mb-0 [&_pre]:mb-0 md:items-center"
+                    >
+                        <div className="rounded relative overflow-hidden shadow">
+                            {/* eslint-disable-next-line react/forbid-dom-props */}
+                            <div
+                                className="rounded h-full w-full z-10 relative min-h-[50px]"
+                                style={{ backgroundColor: `var(${name})` }}
+                            >
+                                &nbsp;
+                            </div>
+                            <div className="absolute inset-0 h-full w-full min-h-[50px] bg-[radial-gradient(circle,#73737350_1px,transparent_1px)] bg-[size:6px_6px]">
+                                &nbsp;
+                            </div>
                         </div>
-                        <pre className="rounded border border-primary p-2 text-sm">{name}</pre>
-                        <pre className="rounded border border-primary p-2 text-sm">{tailwindClass}</pre>
-                        <p className="!mb-0 text-xs">{description}</p>
+                        <div className="flex flex-col">
+                            <p className="md:hidden">Name</p>
+                            <pre className="rounded border border-primary p-2 text-sm">{name}</pre>
+                        </div>
+                        <div className="flex flex-col">
+                            <p className="md:hidden">Tailwind class</p>
+                            <pre className="rounded border border-primary p-2 text-sm">{tailwindClass}</pre>
+                        </div>
+                        <div className="flex flex-col">
+                            <p className="md:hidden">Description</p>
+                            <p className="!mb-0 text-xs">{description}</p>
+                        </div>
                     </div>
                 )
             })}
@@ -192,23 +211,38 @@ export function SemanticColors(): JSX.Element {
     const textColors: RenderColorConfig[] = [
         {
             tailwindClass: 'text-primary',
-            description: 'the main text color',
+            description: 'the main text color, used on any surface',
             name: '--text-primary',
         },
         {
             tailwindClass: 'text-primary-inverse',
-            description: 'the main text color on a inverted background',
+            description: 'the main text color on any inverted surface',
             name: '--text-primary-inverse',
         },
         {
             tailwindClass: 'text-secondary',
-            description: 'a more subtle text color',
+            description: 'a more subtle text color, used on any surface',
             name: '--text-secondary',
         },
         {
             tailwindClass: 'text-tertiary',
-            description: 'most subtle text color',
+            description: 'most subtle text color, used on any surface',
             name: '--text-tertiary',
+        },
+        {
+            tailwindClass: 'text-success',
+            description: 'the success text color, used on any surface',
+            name: '--text-success',
+        },
+        {
+            tailwindClass: 'text-warning',
+            description: 'the warning text color, used on any surface',
+            name: '--text-warning',
+        },
+        {
+            tailwindClass: 'text-error',
+            description: 'the error text color, used on any surface',
+            name: '--text-error',
         },
         // {
         //     tailwindClass: 'text-accent-primary',
@@ -250,28 +284,6 @@ export function SemanticColors(): JSX.Element {
         //     description: 'the secondary accent text color on highlight',
         //     variableName: '--accent-secondary-highlight'
         // }
-    ]
-    const textOnFillColors: RenderColorConfig[] = [
-        {
-            tailwindClass: 'text-info-on-fill',
-            description: 'the info text color on an info fill',
-            name: '--text-info-on-fill',
-        },
-        {
-            tailwindClass: 'text-warning-on-fill',
-            description: 'the warning text color on a warning fill',
-            name: '--text-warning-on-fill',
-        },
-        {
-            tailwindClass: 'text-error-on-fill',
-            description: 'the error text color on an error fill',
-            name: '--text-error-on-fill',
-        },
-        {
-            tailwindClass: 'text-success-on-fill',
-            description: 'the success text color on a success fill',
-            name: '--text-success-on-fill',
-        },
     ]
     const backgroundColors: RenderColorConfig[] = [
         {
@@ -326,12 +338,12 @@ export function SemanticColors(): JSX.Element {
         },
         {
             tailwindClass: 'bg-fill-warning-tertiary',
-            description: 'the warning tertiary fill color',
+            description: 'the warning tertiary fill color, with transparency',
             name: '--bg-fill-warning-tertiary',
         },
         {
             tailwindClass: 'bg-fill-warning-highlight',
-            description: 'the warning highlight fill color',
+            description: 'the warning highlight fill color, with transparency',
             name: '--bg-fill-warning-highlight',
         },
         {
@@ -341,12 +353,12 @@ export function SemanticColors(): JSX.Element {
         },
         {
             tailwindClass: 'bg-fill-error-tertiary',
-            description: 'the error tertiary fill color',
+            description: 'the error tertiary fill color, with transparency',
             name: '--bg-fill-error-tertiary',
         },
         {
             tailwindClass: 'bg-fill-error-highlight',
-            description: 'the error highlight fill color',
+            description: 'the error highlight fill color, with transparency',
             name: '--bg-fill-error-highlight',
         },
         {
@@ -356,12 +368,12 @@ export function SemanticColors(): JSX.Element {
         },
         {
             tailwindClass: 'bg-fill-success-highlight',
-            description: 'the success highlight fill color',
+            description: 'the success highlight fill color, with transparency',
             name: '--bg-fill-success-highlight',
         },
         {
             tailwindClass: 'bg-fill-success-tertiary',
-            description: 'the success tertiary fill color',
+            description: 'the success tertiary fill color, with transparency',
             name: '--bg-fill-success-tertiary',
         },
         {
@@ -375,12 +387,38 @@ export function SemanticColors(): JSX.Element {
             name: '--bg-fill-info-tertiary',
         },
     ]
-
+    const textOnFillColors: RenderColorConfig[] = [
+        {
+            tailwindClass: 'text-info-on-fill',
+            description: 'the info text color on an info fill',
+            name: '--text-info-on-fill',
+        },
+        {
+            tailwindClass: 'text-warning-on-fill',
+            description: 'the warning text color on a warning fill',
+            name: '--text-warning-on-fill',
+        },
+        {
+            tailwindClass: 'text-error-on-fill',
+            description: 'the error text color on an error fill',
+            name: '--text-error-on-fill',
+        },
+        {
+            tailwindClass: 'text-success-on-fill',
+            description: 'the success text color on a success fill',
+            name: '--text-success-on-fill',
+        },
+    ]
     const borderColors: RenderColorConfig[] = [
         {
             tailwindClass: 'border-primary',
             description: 'the primary border color',
             name: '--border-primary',
+        },
+        {
+            tailwindClass: 'border-secondary',
+            description: 'the secondary border color',
+            name: '--border-secondary',
         },
         {
             tailwindClass: 'border-info',
@@ -407,6 +445,22 @@ export function SemanticColors(): JSX.Element {
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
                 <div className="space-y-0">
+                    <h2>Backgrounds</h2>
+                    <p>Behind surfaces, large areas: app scenes, etc.</p>
+                </div>
+                <RenderTable colors={backgroundColors} />
+            </div>
+            <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
+                <div className="space-y-0">
+                    <h2>Surfaces</h2>
+                    <p>
+                        Above backgrounds, smaller areas: Cards, Tables, stuff that stands out on top of the background.
+                    </p>
+                </div>
+                <RenderTable colors={surfaceColors} />
+            </div>
+            <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
+                <div className="space-y-0">
                     <h2>Texts</h2>
                     <p>
                         Texts are used to display content on the screen. They can be used to display text, icons, and
@@ -424,22 +478,6 @@ export function SemanticColors(): JSX.Element {
                     </p>
                 </div>
                 <RenderTable colors={textOnFillColors} />
-            </div>
-            <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
-                <div className="space-y-0">
-                    <h2>Backgrounds</h2>
-                    <p>Behind surfaces, large areas: app scenes, etc.</p>
-                </div>
-                <RenderTable colors={backgroundColors} />
-            </div>
-            <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
-                <div className="space-y-0">
-                    <h2>Surfaces</h2>
-                    <p>
-                        Above backgrounds, smaller areas: Cards, Tables, stuff that stands out on top of the background.
-                    </p>
-                </div>
-                <RenderTable colors={surfaceColors} />
             </div>
             <div className="flex flex-col gap-4 border border-primary rounded-md p-2 bg-fill-primary">
                 <div className="space-y-0">
