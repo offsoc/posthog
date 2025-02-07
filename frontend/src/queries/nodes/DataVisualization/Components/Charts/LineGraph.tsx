@@ -191,7 +191,7 @@ export const LineGraph = (): JSX.Element => {
             (acc, cur, curIndex) => {
                 const line: LineAnnotationOptions = {
                     label: {
-                        display: true,
+                        display: cur.displayLabel ?? true,
                         content: cur.label,
                         position: 'end',
                     },
