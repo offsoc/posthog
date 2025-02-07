@@ -20,11 +20,13 @@ from posthog.hogql.hogql import ast
 from posthog.hogql.parser import parse_expr
 from posthog.hogql.printer import prepare_ast_for_printing, print_prepared_ast
 from posthog.hogql.property import property_to_expr
+from posthog.models import Team
 from posthog.schema import (
     EventPropertyFilter,
     HogQLQueryModifiers,
     MaterializationMode,
 )
+from posthog.temporal.batch_exports import sql
 from posthog.temporal.batch_exports.heartbeat import BatchExportRangeHeartbeatDetails, DateRange
 from posthog.temporal.batch_exports.metrics import (
     get_bytes_exported_metric,
@@ -1046,8 +1048,6 @@ def compose_filters_clause(
         A printed string with the ClickHouse SQL clause, and a dictionary
         of placeholder to values to be used as query parameters.
     """
-    from posthog.models import Team
-
     team = Team.objects.get(id=team_id)
     context = HogQLContext(
         team=team,
