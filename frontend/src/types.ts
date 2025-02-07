@@ -4393,6 +4393,12 @@ export type GroupedBatchExportRuns = {
     runs: BatchExportRun[]
 }
 
+export type BatchExportBackfillProgress = {
+    total_runs?: number
+    finished_runs?: number
+    progress?: number
+}
+
 export type RawBatchExportBackfill = {
     id: string
     status:
@@ -4410,7 +4416,7 @@ export type RawBatchExportBackfill = {
     start_at?: string
     end_at?: string
     last_updated_at?: string
-    total_runs?: number
+    progress?: BatchExportBackfillProgress
 }
 
 export type BatchExportBackfill = {
@@ -4430,7 +4436,7 @@ export type BatchExportBackfill = {
     start_at?: Dayjs
     end_at?: Dayjs
     last_updated_at?: Dayjs
-    total_runs?: number
+    progress?: BatchExportBackfillProgress
 }
 
 export type SDK = {
